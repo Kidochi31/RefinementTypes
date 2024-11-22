@@ -8,6 +8,7 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using static RefinementTypes.Refinements.Refinement;
+using static RefinementTypes.Refinements.StandardRefinement;
 
 namespace RefinementTypes.Printing
 {
@@ -22,8 +23,8 @@ namespace RefinementTypes.Printing
                     return;
                 case TypeTest typeTest:
                     Console.WriteLine($"Type Test: {StringifyType(typeTest.Type)}");
-                    //StandardType standardType = TypeSimplifier.SimplifyType(typeTest.Type);
-                    //Console.WriteLine($"Standardised Type: {StringifyStandardType(standardType)}");
+                    StandardType standardType = TypeSimplifier.SimplifyType(typeTest.Type);
+                    Console.WriteLine($"Standardised Type: {StringifyStandardType(standardType)}");
                     return;
             }
         }
@@ -106,8 +107,18 @@ namespace RefinementTypes.Printing
         {
             switch (refinement)
             {
-                case BaseTypeRefinement baseTypeRefinement:
-                    return $": {baseTypeRefinement.Type.Name}";
+                case StandardRefinement.BaseTypeRefinement baseTypeRefinement:
+                    return $"{(baseTypeRefinement.Not ? "not" : "")} : {baseTypeRefinement.Type.Name}";
+                case StandardRefinement.Literal literal:
+                    return $"{(literal.Not ? "not" : "")} {literal.Token.Lexeme}";
+                case StandardRefinement.Identifier identifier:
+                    return $"{(identifier.Not ? "not" : "")} {identifier.Token.IdentifierName}";
+                case StandardRefinement.Unary unary:
+                    return $"({(unary.Not ? "not" : "")} {unary.Operator.Lexeme} {StringifyStandardRefinement(unary.Right)})";
+                case StandardRefinement.Binary binary:
+                    return $"({(binary.Not ? "not" : "")} {StringifyStandardRefinement(binary.Left)} {binary.Operator.Lexeme} {StringifyStandardRefinement(binary.Right)})";
+                case StandardRefinement.Comparison comparison:
+                    return $"({comparison.ComparisonType} {StringifyStandardRefinement(comparison.Right)})";
             }
 
             return "INVALID STANDARD REFINEMENT";

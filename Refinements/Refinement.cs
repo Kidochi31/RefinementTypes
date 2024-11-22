@@ -26,12 +26,16 @@ namespace RefinementTypes.Refinements
             public readonly Refinement Right = right;
         }
 
+        public class LogicalUnary(Token token, Refinement right) : Unary(token, right) { }
+
         public class Binary(Token token, Refinement left, Refinement right) : Refinement
         {
             public readonly Token Operator = token;
             public readonly Refinement Right = right;
             public readonly Refinement Left = left;
         }
+
+        public class LogicalBinary(Token token, Refinement left, Refinement right) : Binary(token, left, right) { }
 
         public class Grouping(Token paren1, Token paren2, Refinement refinement) : Refinement
         {

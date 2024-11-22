@@ -100,7 +100,7 @@ namespace RefinementTypes.Parsing
                 {
                     Token previous = Previous;
                     Refinement right = RefinementLogicalUnary();
-                    left = new Refinement.Binary(previous, left, right);
+                    left = new Refinement.LogicalBinary(previous, left, right);
 
                     if (previous.Type != type)
                     {
@@ -126,12 +126,13 @@ namespace RefinementTypes.Parsing
                 if (right is not Refinements.Refinement.Literal
                     && right is not Refinements.Refinement.Identifier
                     && right is not Refinements.Refinement.Unary
-                    && right is not Refinements.Refinement.Grouping)
+                    && right is not Refinements.Refinement.Grouping
+                    && right is not Refinements.Refinement.Is)
                 {
                     Error(token, "not must be followed by a not or prefix expression.");
                 }
 
-                return new Refinement.Unary(token, right);
+                return new Refinement.LogicalUnary(token, right);
             }
             return RefinementComparison();
         }

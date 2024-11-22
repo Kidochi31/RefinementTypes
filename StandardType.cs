@@ -16,15 +16,27 @@ namespace RefinementTypes
             Bases = bases;
         }
 
+        public List<List<StandardRefinement>> GetSumOfProductsRefinements()
+        {
+            return (from baseType in Bases select (from refinement in baseType.Refinements select refinement).ToList()).ToList();
+        }
+
         public static StandardType Or(StandardType a, StandardType b)
         {
             return new StandardType([.. a.Bases, .. b.Bases]);
         }
 
-        public static StandardType Refine(StandardType a, StandardRefinement refinement)
+        public static StandardType Refine(StandardType a, List<List<StandardRefinement>> sumOfProductsRefinements)
         {
-            return new StandardType((from baseType in a.Bases
-                                     select new StandardBaseType([.. baseType.Refinements, refinement])).ToList());
+            List<StandardBaseType> baseTypes = [];
+            foreach (StandardBaseType aBase in a.Bases)
+            {
+                foreach(List<StandardRefinement> refinements in sumOfProductsRefinements)
+                {
+                    baseTypes.Add(new StandardBaseType([.. aBase.Refinements, .. refinements]));
+                }
+            }
+            return new StandardType(baseTypes);
         }
 
         public static StandardType And(StandardType a, StandardType b)
