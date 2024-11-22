@@ -5,9 +5,9 @@
 
 Start -> ( TypeDeclaration | TypeTest | '\n' ) * ;
 
-TypeDeclaration -> 'type' Name '\n' ;
+TypeDeclaration -> 'type' IDENTIFIER '\n' ;
 
-Name -> ( [A-Z] | [a-z] | _ | [0-9] )* ;
+IDENTIFIER -> ( [A-Z] | [a-z] | _ | [0-9] )* ;
 
 TypeTest -> 'test' type '\n' ;
 
@@ -20,5 +20,23 @@ RefinedType -> BaseType ( '[' RefinementExpression ']' ) * ;
 
 BaseType -> Name | '(' Type ')' ;
 
-RefinementExpression -> 
+RefinementExpression -> LogicalRefinementExpression ;
+LogicalRefinementExpression -> LogicalUnary ( 'and' LogicalUnary ) *
+                             | LogicalUnary ( 'or' LogicalUnary ) *
+                             | LogicalUnary ( 'xor' LogicalUnary ) * ;
+LogicalUnary -> LogicalNot | Comparison ;
+LogicalNot -> 'not' LogicalNot | Prefix ;
 
+Comparison -> ('=' | '!=' | '>' | '<=' | '>' | '>=')? Numeric ;
+
+Numeric -> Term ;
+
+Term -> Factor ( ( '+' | '-' ) Factor )* ;
+
+Factor -> Prefix ;
+
+Prefix -> ( '+' | '-' ) Prefix | Primary ;
+
+Primary -> IDENTIFIER | Literal | '(' RefinementExpression ')' ;
+
+Literal -> 'true' | 'false' | CHAR_LITERAL | NUMBER_LITERAL ;

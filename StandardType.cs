@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RefinementTypes.Refinements;
 
 namespace RefinementTypes
 {
@@ -20,7 +21,7 @@ namespace RefinementTypes
             return new StandardType([.. a.Bases, .. b.Bases]);
         }
 
-        public static StandardType Refine(StandardType a, Refinement refinement)
+        public static StandardType Refine(StandardType a, StandardRefinement refinement)
         {
             return new StandardType((from baseType in a.Bases
                                      select new StandardBaseType([.. baseType.Refinements, refinement])).ToList());

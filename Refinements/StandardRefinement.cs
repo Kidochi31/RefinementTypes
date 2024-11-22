@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RefinementTypes
+namespace RefinementTypes.Refinements
 {
-    internal abstract class Refinement
+    internal abstract class StandardRefinement
     {
     }
 
-    internal class BaseTypeRefinement : Refinement
+    internal class BaseTypeRefinement : StandardRefinement
     {
         public BaseType Type;
 

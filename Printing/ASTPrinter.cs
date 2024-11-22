@@ -1,4 +1,5 @@
 ﻿using RefinementTypes.Parsing;
+using RefinementTypes.Refinements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,9 +39,9 @@ namespace RefinementTypes.Printing
         public static string StringifyStandardBaseType(StandardBaseType type)
         {
             string result = "Any";
-            foreach(Refinement refinement in type.Refinements)
+            foreach(StandardRefinement refinement in type.Refinements)
             {
-                result += $"[{StringifyRefinement(refinement)}]";
+                result += $"[{StringifyStandardRefinement(refinement)}]";
             }
             return result;
         }
@@ -81,6 +82,16 @@ namespace RefinementTypes.Printing
         public static string StringifyRefinement(Refinement refinement)
         {
             switch(refinement)
+            {
+
+            }
+
+            return "INVALID REFINEMENT";
+        }
+
+        public static string StringifyStandardRefinement(StandardRefinement refinement)
+        {
+            switch (refinement)
             {
                 case BaseTypeRefinement baseTypeRefinement:
                     return $": {baseTypeRefinement.Type.Name}";

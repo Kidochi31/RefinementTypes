@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RefinementTypes.Refinements;
 
 namespace RefinementTypes
 {
@@ -13,11 +14,12 @@ namespace RefinementTypes
             switch(type)
             {
                 case BaseType baseType:
-                    Refinement typeRefinement = new BaseTypeRefinement(baseType);
+                    StandardRefinement typeRefinement = new BaseTypeRefinement(baseType);
                     return new StandardType([new StandardBaseType([typeRefinement])]);
 
                 case RefinedType refinedType:
-                    return StandardType.Refine(SimplifyType(refinedType.BaseType), refinedType.Refinement);
+                    return null;
+                    //return StandardType.Refine(SimplifyType(refinedType.BaseType), refinedType.Refinement);
 
                 case OrType orType:
                     StandardType orResultType = SimplifyType(orType.BaseTypes[0]);
