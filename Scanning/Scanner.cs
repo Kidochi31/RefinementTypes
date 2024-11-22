@@ -137,12 +137,7 @@ namespace RefinementTypes.Scanning
                     //Ignore whitespace
                     return null;
                 case '@':
-                    if (Match('"')) return RawString();
                     return EscapedIdentifier();
-                case '"':
-                    return SimpleString();
-                case '`':
-                    return CustomLiteral();
                 case '\'':
                     return CharLiteral();
 
@@ -150,7 +145,7 @@ namespace RefinementTypes.Scanning
                     if (IsDigit(c)) return Number();
                     else if (IsAlpha(c)) return SimpleIdentifier();
 
-                    SentryCompiler.Error(Line, Column, $"Unexpected character '{c}'.");
+                    Compiler.Error(Line, Column, $"Unexpected character '{c}'.");
                     return null;
             }
         }
@@ -164,7 +159,7 @@ namespace RefinementTypes.Scanning
             {
                 char current = Advance();
                 if (current == '\n') //\n not allowed in simple strings
-                    SentryCompiler.Error(Line, Column, "Char literal cannot contain new line.");
+                    Compiler.Error(Line, Column, "Char literal cannot contain new line.");
                 if (current == '\'') //end on '
                 {
                     terminated = true;
@@ -179,81 +174,24 @@ namespace RefinementTypes.Scanning
                     if (Match('0')) { value = '\0'; continue; }
                     if (Match('"')) { value = '"'; continue; }
                     if (Match('`')) { value = '`'; continue; }
-                    SentryCompiler.Error(Line, Column, "Unescaped '\\'.");
+                    Compiler.Error(Line, Column, "Unescaped '\\'.");
                 }
                 value = current;
             }
 
             if (!terminated)
             {
-                SentryCompiler.Error(Line, Column, "Unterminated char literal.");
+                Compiler.Error(Line, Column, "Unterminated char literal.");
                 return null;
             }
 
             if (length != 1)
             {
-                SentryCompiler.Error(Line, Column, "Char literal can only be one character.");
+                Compiler.Error(Line, Column, "Char literal can only be one character.");
                 return null;
             }
 
             return CreateCharToken(CHAR, value);
-        }
-
-        Token CustomLiteral()
-        {
-            bool terminated = false;
-            StringBuilder builder = new StringBuilder();
-            while (!IsAtEnd())
-            {
-                char current = Advance();
-                if (current == '\n') //\n not allowed in custom literals
-                    SentryCompiler.Error(Line, Column, "Custom literals cannot contain new line.");
-                if (current == '`' && !(Peek() == '`')) //end on non-double `
-                {
-                    terminated = true;
-                    break;
-                }
-                if (current == '`' && Match('`')) //`` becomes `
-                {
-                    builder.Append('`');
-                    continue;
-                }
-                if (current == '\\')
-                {
-                    if (Match('\\')) { builder.Append('\\'); continue; }
-                    if (Match('\'')) { builder.Append('\''); continue; }
-                    if (Match('n')) { builder.Append('\n'); continue; }
-                    if (Match('0')) { builder.Append('\0'); continue; }
-                    if (Match('"')) { builder.Append('"'); continue; }
-                    if (Match('`')) { builder.Append('`'); continue; }
-                    SentryCompiler.Error(Line, Column, "Unescaped '\\'.");
-                }
-                builder.Append(current);
-            }
-
-            if (!terminated)
-            {
-                SentryCompiler.Error(Line, Column, "Unterminated custom literal.");
-                return null;
-            }
-
-            int literalEndIndex = Current; //position of final `
-
-            //ensure that there is a suffix
-            if (!IsAlpha(Peek()))
-            {
-                SentryCompiler.Error(Line, Column, "Custom literal requires suffix");
-                return null;
-            }
-
-
-            //find any literal suffix characters -> alphanumeric
-            while (IsAlphaNumeric(Peek())) Advance();
-
-            //Trim `...`
-            string value = builder.ToString();
-            string suffix = Source[(literalEndIndex + 1)..Current];
-            return CreateCustomLiteralToken(CUSTOM, value, suffix);
         }
 
         Token EscapedIdentifier()
@@ -319,78 +257,6 @@ namespace RefinementTypes.Scanning
             }
         }
 
-        Token? RawString()
-        {
-            bool terminated = false;
-            StringBuilder builder = new StringBuilder();
-            while (!IsAtEnd())
-            {
-                char current = Advance();
-                if (current == '"' && !(Peek() == '"')) //end on non-double "
-                {
-                    terminated = true;
-                    break;
-                }
-                if (current == '"' && Match('"')) //"" becomes "
-                {
-                    builder.Append('"');
-                    continue;
-                }
-                builder.Append(current);
-            }
-
-            if (!terminated)
-            {
-                SentryCompiler.Error(Line, Column, "Unterminated string.");
-                return null;
-            }
-
-            //Trim @"..."
-            return CreateStringToken(STRING, builder.ToString());
-        }
-
-        Token? SimpleString()
-        {
-            bool terminated = false;
-            StringBuilder builder = new StringBuilder();
-            while (!IsAtEnd())
-            {
-                char current = Advance();
-                if (current == '\n') //\n not allowed in simple strings
-                    SentryCompiler.Error(Line, Column, "Simple string cannot contain new line.");
-                if (current == '"' && !(Peek() == '"')) //end on non-double "
-                {
-                    terminated = true;
-                    break;
-                }
-                if (current == '"' && Match('"')) //"" becomes "
-                {
-                    builder.Append('"');
-                    continue;
-                }
-                if (current == '\\')
-                {
-                    if (Match('\\')) { builder.Append('\\'); continue; }
-                    if (Match('\'')) { builder.Append('\''); continue; }
-                    if (Match('n')) { builder.Append('\n'); continue; }
-                    if (Match('0')) { builder.Append('\0'); continue; }
-                    if (Match('"')) { builder.Append('"'); continue; }
-                    if (Match('`')) { builder.Append('`'); continue; }
-                    SentryCompiler.Error(Line, Column, "Unescaped '\\'.");
-                }
-                builder.Append(current);
-            }
-
-            if (!terminated)
-            {
-                SentryCompiler.Error(Line, Column, "Unterminated string.");
-                return null;
-            }
-
-            //Trim "..."
-            return CreateStringToken(STRING, builder.ToString());
-        }
-
         char PeekNext()
         {
             if (Current + 1 >= Source.Length) return '\0';
@@ -419,7 +285,7 @@ namespace RefinementTypes.Scanning
                 return true;
             }
 
-            SentryCompiler.Error(Line, Column, message);
+            Compiler.Error(Line, Column, message);
             return false;
         }
 
@@ -449,14 +315,6 @@ namespace RefinementTypes.Scanning
             return newToken;
         }
 
-        CustomLiteralToken CreateCustomLiteralToken(TokenType type, string value, string suffix)
-        {
-            string text = Source[Start..Current];
-            CustomLiteralToken newToken = new CustomLiteralToken(type, text, StartLine, StartColumn, Line, Column, value, suffix);
-            Tokens.Add(newToken);
-            return newToken;
-        }
-
         FloatToken CreateFloatToken(TokenType type, double value, string suffix)
         {
             string text = Source[Start..Current];
@@ -478,14 +336,6 @@ namespace RefinementTypes.Scanning
         {
             string text = Source[Start..Current];
             CharToken newToken = new CharToken(type, text, StartLine, StartColumn, Line, Column, value);
-            Tokens.Add(newToken);
-            return newToken;
-        }
-
-        StringToken CreateStringToken(TokenType type, string value)
-        {
-            string text = Source[Start..Current];
-            StringToken newToken = new StringToken(type, text, StartLine, StartColumn, Line, Column, value);
             Tokens.Add(newToken);
             return newToken;
         }
