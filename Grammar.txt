@@ -27,7 +27,7 @@ LogicalRefinementExpression -> LogicalUnary ( 'and' LogicalUnary ) *
 LogicalUnary -> LogicalNot | Comparison ;
 LogicalNot -> 'not' LogicalNot | Prefix ;
 
-Comparison -> ('=' | '!=' | '>' | '<=' | '>' | '>=')? Numeric ;
+Comparison -> ('=' | '!=' | '>' | '<=' | '>' | '>=')? Numeric | ':' Type ;
 
 Numeric -> Term ;
 

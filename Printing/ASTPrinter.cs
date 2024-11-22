@@ -1,11 +1,13 @@
 ﻿using RefinementTypes.Parsing;
 using RefinementTypes.Refinements;
+using RefinementTypes.Scanning;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using static RefinementTypes.Refinements.Refinement;
 
 namespace RefinementTypes.Printing
 {
@@ -20,8 +22,8 @@ namespace RefinementTypes.Printing
                     return;
                 case TypeTest typeTest:
                     Console.WriteLine($"Type Test: {StringifyType(typeTest.Type)}");
-                    StandardType standardType = TypeSimplifier.SimplifyType(typeTest.Type);
-                    Console.WriteLine($"Standardised Type: {StringifyStandardType(standardType)}");
+                    //StandardType standardType = TypeSimplifier.SimplifyType(typeTest.Type);
+                    //Console.WriteLine($"Standardised Type: {StringifyStandardType(standardType)}");
                     return;
             }
         }
@@ -54,7 +56,7 @@ namespace RefinementTypes.Printing
                     return baseType.Name;
 
                 case RefinedType refinedType:
-                    return $"{StringifyType(refinedType.BaseType)}";
+                    return $"{StringifyType(refinedType.BaseType)}[{StringifyRefinement(refinedType.Refinement)}]";
 
                 case OrType orType:
                     string orString = StringifyType(orType.BaseTypes[0]);
@@ -83,7 +85,18 @@ namespace RefinementTypes.Printing
         {
             switch(refinement)
             {
-
+                case Refinement.Literal literal:
+                    return literal.Token.Lexeme;
+                case Refinement.Identifier identifier:
+                    return identifier.Token.IdentifierName;
+                case Refinement.Grouping grouping:
+                    return StringifyRefinement(grouping.Refinement);
+                case Refinement.Unary unary:
+                    return $"( {unary.Operator.Lexeme} {StringifyRefinement(unary.Right)} )";
+                case Refinement.Binary binary:
+                    return $"( {StringifyRefinement(binary.Left)} {binary.Operator.Lexeme} {StringifyRefinement(binary.Right)} )";
+                case Refinement.Is ris:
+                    return $"(: {StringifyType(ris.Type)} )";
             }
 
             return "INVALID REFINEMENT";
@@ -97,7 +110,7 @@ namespace RefinementTypes.Printing
                     return $": {baseTypeRefinement.Type.Name}";
             }
 
-            return "INVALID REFINEMENT";
+            return "INVALID STANDARD REFINEMENT";
         }
     }
 }

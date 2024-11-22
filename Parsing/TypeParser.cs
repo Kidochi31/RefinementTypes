@@ -124,6 +124,7 @@ namespace RefinementTypes.Parsing
                 //if not is not followed by a prefix expression (or another not)
                 //then this is invalid
                 if (right is not Refinements.Refinement.Literal
+                    && right is not Refinements.Refinement.Identifier
                     && right is not Refinements.Refinement.Unary
                     && right is not Refinements.Refinement.Grouping)
                 {
@@ -135,7 +136,7 @@ namespace RefinementTypes.Parsing
             return RefinementComparison();
         }
 
-        //Comparison -> | ('=' | '!=' | '>' | '<=' | '>' | '>=') Numeric ;
+        //Comparison -> | ('=' | '!=' | '>' | '<=' | '>' | '>=') Numeric | ':' Type ;
         Refinement RefinementComparison()
         {
             if (Match(EQUALS, BANG_EQUALS, LESS, LT_EQUALS)
@@ -145,6 +146,13 @@ namespace RefinementTypes.Parsing
                 Token token = Previous;
                 Refinement right = RefinementNumeric();
                 return new Refinement.Unary(token, right);
+            }
+
+            if (Match(COLON))
+            {
+                Token token = Previous;
+                Type right = Type();
+                return new Refinement.Is(token, right);
             }
 
             return RefinementNumeric();

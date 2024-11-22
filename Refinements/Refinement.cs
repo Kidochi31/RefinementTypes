@@ -37,5 +37,11 @@ namespace RefinementTypes.Refinements
         {
             public readonly Refinement Refinement = refinement;
         }
+
+        public class Is(Token colon, Type type) : Refinement
+        {
+            public readonly Token Colon = colon;
+            public readonly Type Type = type;
+        }
     }
 }
