@@ -1,0 +1,24 @@
+# Goal of types:
+# 1. Predict the resultant type of an expression (using its input types) (e.g. to find the type of a in a = b + c)
+# 2. Check whether a type can be incorporated into another type (e.g. to check whether f(a) is valid)
+
+
+Start -> ( TypeDeclaration | TypeTest | '\n' ) * ;
+
+TypeDeclaration -> 'type' Name '\n' ;
+
+Name -> ( [A-Z] | [a-z] | _ | [0-9] )* ;
+
+TypeTest -> 'test' type '\n' ;
+
+Type -> CombinationType ;
+
+CombinationType -> RefinedType ( '|' RefinedType )*
+				 | RefinedType ( '&' RefinedType )* ;
+
+RefinedType -> BaseType ( '[' RefinementExpression ']' ) * ;
+
+BaseType -> Name | '(' Type ')' ;
+
+RefinementExpression -> 
+
