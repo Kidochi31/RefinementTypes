@@ -54,4 +54,14 @@ namespace RefinementTypes
             BaseTypes = baseTypes;
         }
     }
+
+    internal class GroupType : Type
+    {
+        public Type BaseType;
+
+        public GroupType(Type baseType)
+        {
+            BaseType = baseType;
+        }
+    }
 }

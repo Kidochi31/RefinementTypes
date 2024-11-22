@@ -11,6 +11,9 @@ namespace RefinementTypes.Scanning
         //TEMP KEYWORDS
         //PRINT,
 
+        // Added tokens
+        NEW_LINE, TEST, TYPE,
+
         //Keyword tokens
         AND, OR, NOT, XOR, TRUE, FALSE, IF, THEN, ELSE, LET,
         USING, AS, IN, DO, FUN, PRO, EXTERN, UNLESS, WHILE, UNTIL,

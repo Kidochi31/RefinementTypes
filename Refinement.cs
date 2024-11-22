@@ -10,11 +10,11 @@ namespace RefinementTypes
     {
     }
 
-    internal class TypeRefinement : Refinement
+    internal class BaseTypeRefinement : Refinement
     {
         public BaseType Type;
 
-        public TypeRefinement(BaseType type)
+        public BaseTypeRefinement(BaseType type)
         {
             Type = type;
         }

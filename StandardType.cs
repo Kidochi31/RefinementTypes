@@ -34,7 +34,7 @@ namespace RefinementTypes
                 foreach(StandardBaseType bBase in b.Bases)
                 {
                     StandardBaseType conjunction = new StandardBaseType([.. aBase.Refinements, .. bBase.Refinements]);
-                    baseTypes.Add(conjunction)
+                    baseTypes.Add(conjunction);
                 }
             }
             return new StandardType(baseTypes);

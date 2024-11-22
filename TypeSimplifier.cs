@@ -13,27 +13,30 @@ namespace RefinementTypes
             switch(type)
             {
                 case BaseType baseType:
-                    Refinement typeRefinement = new TypeRefinement(baseType);
+                    Refinement typeRefinement = new BaseTypeRefinement(baseType);
                     return new StandardType([new StandardBaseType([typeRefinement])]);
 
                 case RefinedType refinedType:
-                    return StandardType.Refine(Simplify(refinedType.BaseType), refinedType.Refinement);
+                    return StandardType.Refine(SimplifyType(refinedType.BaseType), refinedType.Refinement);
 
                 case OrType orType:
-                    StandardType orResultType = Simplify(orType.BaseTypes[0]);
+                    StandardType orResultType = SimplifyType(orType.BaseTypes[0]);
                     foreach (Type orBase in orType.BaseTypes[1..])
                     {
-                        orResultType = StandardType.Or(orResultType, Simplify(orBase));
+                        orResultType = StandardType.Or(orResultType, SimplifyType(orBase));
                     }
                     return orResultType;
 
                 case AndType andType:
-                    StandardType andResultType = Simplify(andType.BaseTypes[0]);
+                    StandardType andResultType = SimplifyType(andType.BaseTypes[0]);
                     foreach (Type andBase in andType.BaseTypes[1..])
                     {
-                        andResultType = StandardType.And(andResultType, Simplify(andBase));
+                        andResultType = StandardType.And(andResultType, SimplifyType(andBase));
                     }
                     return andResultType;
+
+                case GroupType groupType:
+                    return SimplifyType(groupType.BaseType);
             }
             Console.WriteLine($"Invalid type: {type}!");
             return null;

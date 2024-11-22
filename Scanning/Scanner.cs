@@ -133,9 +133,10 @@ namespace RefinementTypes.Scanning
                 case ' ':
                 case '\r':
                 case '\t':
-                case '\n':
                     //Ignore whitespace
                     return null;
+                case '\n':
+                    return CreateToken(NEW_LINE);
                 case '@':
                     return EscapedIdentifier();
                 case '\'':
@@ -358,6 +359,9 @@ namespace RefinementTypes.Scanning
 
         static readonly Dictionary<string, TokenType> Keywords = new Dictionary<string, TokenType>
         {
+            {"test", TEST},
+            {"type", TYPE},
+
             {"and",  AND },
             {"_", UNDERSCORE },
             {"let", LET },

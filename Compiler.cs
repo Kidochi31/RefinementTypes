@@ -2,6 +2,8 @@
 
 
 using System.Text;
+using RefinementTypes.Parsing;
+using RefinementTypes.Printing;
 using RefinementTypes.Scanning;
 
 namespace RefinementTypes
@@ -27,7 +29,7 @@ namespace RefinementTypes
             {
                 Console.Write("> ");
                 string? line = Console.ReadLine();
-                PrintAllTokens(line);
+                PrintAst(line);
                 HadError = false;
                 HadRuntimeError = false;
             }
@@ -41,6 +43,25 @@ namespace RefinementTypes
             foreach (Token token in tokens)
             {
                 Console.WriteLine(token);
+            }
+        }
+
+        static void PrintAst(string source)
+        {
+            Scanner scanner = new Scanner(source);
+            Parser parser = new Parser(scanner);
+
+            try
+            {
+                List<TopLevel> topLevels = parser.ParseTopLevels();
+                foreach(TopLevel tl in topLevels)
+                {
+                    ASTPrinter.PrintTopLevel(tl);
+                }
+            }
+            catch (Parser.ParseError e)
+            {
+                Console.WriteLine($"PARSE ERROR: {e.Message}");
             }
         }
 
