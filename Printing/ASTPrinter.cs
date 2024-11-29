@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static RefinementTypes.Refinements.Refinement;
 using static RefinementTypes.Refinements.StandardRefinement;
+using RefinementTypes.Checking;
 
 namespace RefinementTypes.Printing
 {
@@ -25,6 +26,14 @@ namespace RefinementTypes.Printing
                     Console.WriteLine($"Type Test: {StringifyType(typeTest.Type)}");
                     StandardType standardType = TypeSimplifier.SimplifyType(typeTest.Type);
                     Console.WriteLine($"Standardised Type: {StringifyStandardType(standardType)}");
+                    return;
+                case TypeFit typeFit:
+                    Console.WriteLine($"Type Fit: {StringifyType(typeFit.FromType)} into {StringifyType(typeFit.InType)}");
+                    StandardType standardFromType = TypeSimplifier.SimplifyType(typeFit.FromType);
+                    StandardType standardInType = TypeSimplifier.SimplifyType(typeFit.InType);
+                    Console.WriteLine($"From Standardised Type: {StringifyStandardType(standardFromType)}");
+                    Console.WriteLine($"Into Standardised Type: {StringifyStandardType(standardInType)}");
+                    Console.WriteLine($"Imposition: {(Imposition.AFitsIntoB(standardFromType, standardInType) ? "successful" : "failure")}");
                     return;
             }
         }

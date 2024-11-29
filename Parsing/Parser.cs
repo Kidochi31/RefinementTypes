@@ -47,11 +47,25 @@ namespace RefinementTypes.Parsing
             return topLevels;
         }
 
+        //Start -> ( TypeDeclaration | TypeTest | TypeFit | '\n' ) * ;
         TopLevel TopLevel()
         {
             if (Match(TYPE)) return TypeDeclaration();
             if (Match(TEST)) return TypeTest();
+            if (Match(FIT)) return TypeFit();
             throw new ParseError();
+        }
+
+        // TypeFit -> 'fit' type 'in' type '\n' ; 
+        TypeFit TypeFit()
+        {
+            Token fitToken = Previous;
+            Type fromType = Type();
+            Token inToken = Consume(IN, "expected in after fit.");
+            Type toType = Type();
+            Token newLine = ConsumeAny("expected new line at end of declaration.", NEW_LINE, EOF);
+
+            return new TypeFit(fitToken, fromType, inToken, toType, newLine);
         }
 
         TypeDeclaration TypeDeclaration()

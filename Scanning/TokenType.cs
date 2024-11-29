@@ -12,7 +12,7 @@ namespace RefinementTypes.Scanning
         //PRINT,
 
         // Added tokens
-        NEW_LINE, TEST, TYPE,
+        NEW_LINE, TEST, TYPE, FIT,
 
         //Keyword tokens
         AND, OR, NOT, XOR, TRUE, FALSE, IF, THEN, ELSE, LET,

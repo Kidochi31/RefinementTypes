@@ -11,6 +11,15 @@ namespace RefinementTypes.Parsing
     {
     }
 
+    internal class TypeFit(Token fitToken, Type fromType, Token inToken, Type inType, Token newLine) : TopLevel
+    {
+        public Token FitToken = fitToken;
+        public Type FromType = fromType;
+        public Type InType = inType;
+        public Token NewLine = newLine;
+        public Token InToken = inToken;
+    }
+
     internal class TypeDeclaration(Token typeToken, IdentifierToken typeName, Token newLine) : TopLevel
     {
         public Token TypeToken = typeToken;

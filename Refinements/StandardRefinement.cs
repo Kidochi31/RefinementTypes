@@ -106,6 +106,41 @@ namespace RefinementTypes.Refinements
                 return new Binary(Operator, Left, Right, !Not);
             }
         }
+
+
+        public static List<List<StandardRefinement>> AndRefinements(List<List<StandardRefinement>> left, List<List<StandardRefinement>> right)
+        {
+            List<List<StandardRefinement>> refinements = [];
+            foreach (List<StandardRefinement> lRefinements in left)
+            {
+                foreach (List<StandardRefinement> rRefinements in right)
+                {
+                    List<StandardRefinement> conjunction = [.. lRefinements, .. rRefinements];
+                    refinements.Add(conjunction);
+                }
+            }
+            return refinements;
+        }
+
+        public static List<List<StandardRefinement>> OrRefinements(List<List<StandardRefinement>> left, List<List<StandardRefinement>> right)
+        {
+            return [.. left, .. right];
+        }
+
+        public static List<List<StandardRefinement>> InvertRefinements(List<List<StandardRefinement>> refinements)
+        {
+            List<List<StandardRefinement>> sumOfProducts = InvertRefinementProduct(refinements[0]);
+            foreach (List<StandardRefinement> products in refinements[1..])
+            {
+                sumOfProducts = AndRefinements(sumOfProducts, InvertRefinementProduct(products));
+            }
+            return sumOfProducts;
+        }
+
+        static List<List<StandardRefinement>> InvertRefinementProduct(List<StandardRefinement> refinementProduct)
+        {
+            return (from refinement in refinementProduct select new List<StandardRefinement>() { refinement.Invert() }).ToList();
+        }
     }
 
     

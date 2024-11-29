@@ -68,27 +68,14 @@ namespace RefinementTypes
                     StandardType standardType = SimplifyType(ris.Type);
                     List<List<StandardRefinement>> refinements = standardType.GetSumOfProductsRefinements();
                     if (not)
-                        refinements = InvertRefinements(refinements);
+                        refinements = StandardRefinement.InvertRefinements(refinements);
                     return refinements;
 
             }
             throw new Exception("Invalid refinement, cannot be converted to sum of products");
         }
 
-        static List<List<StandardRefinement>> InvertRefinements(List<List<StandardRefinement>> refinements)
-        {
-            List<List<StandardRefinement>> sumOfProducts = InvertRefinementProduct(refinements[0]);
-            foreach(List<StandardRefinement> products in refinements[1..])
-            {
-                sumOfProducts = AndRefinements(sumOfProducts, InvertRefinementProduct(products));
-            }
-            return sumOfProducts;
-        }
-
-        static List<List<StandardRefinement>> InvertRefinementProduct(List<StandardRefinement> refinementProduct)
-        {
-            return (from refinement in refinementProduct select new List<StandardRefinement>() { refinement.Invert() }).ToList();
-        }
+        
 
         static List<List<StandardRefinement>> CreateLogicalBinaryRefinement(Refinement.LogicalBinary binary, bool not)
         {
@@ -98,52 +85,39 @@ namespace RefinementTypes
             {
                 case AND:
                     if (!not) // and together
-                        return AndRefinements(left, right);
+                        return StandardRefinement.AndRefinements(left, right);
                     else // or together
                     {
-                        return OrRefinements(left, right);
+                        return StandardRefinement.OrRefinements(left, right);
                     }
                 case OR:
                     if (!not) // or together
-                        return OrRefinements(left, right);
+                        return StandardRefinement.OrRefinements(left, right);
 
                     else // and together
                     {
-                        return AndRefinements(left, right);
+                        return StandardRefinement.AndRefinements(left, right);
                     }
                 case XOR:
                     List<List<StandardRefinement>> leftnot = ConvertRefinementToSumOfProducts(binary.Left, !not);
                     List<List<StandardRefinement>> rightnot = ConvertRefinementToSumOfProducts(binary.Right, !not);
                     if (!not) // (left & rightnot) | (leftnot & right)
                     {
-                        return OrRefinements(AndRefinements(left, rightnot), AndRefinements(leftnot, right));
+                        return StandardRefinement.OrRefinements(
+                            StandardRefinement.AndRefinements(left, rightnot),
+                            StandardRefinement.AndRefinements(leftnot, right));
                     }
                     else // (leftnot & rightnot) | (left & right)
                     {
-                        return OrRefinements(AndRefinements(leftnot, rightnot), AndRefinements(left, right));
+                        return StandardRefinement.OrRefinements(
+                            StandardRefinement.AndRefinements(leftnot, rightnot),
+                            StandardRefinement.AndRefinements(left, right));
                     }
             }
             throw new Exception("Invalid logical binary operator");
         }
 
-        static List<List<StandardRefinement>> AndRefinements(List<List<StandardRefinement>> left, List<List<StandardRefinement>> right)
-        {
-            List<List<StandardRefinement>> refinements = [];
-            foreach (List<StandardRefinement> lRefinements in left)
-            {
-                foreach (List<StandardRefinement> rRefinements in right)
-                {
-                    List<StandardRefinement> conjunction = [.. lRefinements, .. rRefinements];
-                    refinements.Add(conjunction);
-                }
-            }
-            return refinements;
-        }
-
-        static List<List<StandardRefinement>> OrRefinements(List<List<StandardRefinement>> left, List<List<StandardRefinement>> right)
-        {
-            return [.. left, .. right];
-        }
+        
 
         static StandardRefinement CreateStandardBinaryRefinement(Refinement.Binary binary, bool not)
         {
@@ -160,7 +134,6 @@ namespace RefinementTypes
         {
             // ('=' | '!=' | '>' | '<=' | '>' | '>=')
             StandardRefinement right = CreateNonLogicalStandardRefinement(unary.Right);
-            Console.WriteLine(unary.Operator.Lexeme);
             switch(unary.Operator.Type)
             {
                 case EQUALS:

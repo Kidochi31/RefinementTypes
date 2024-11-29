@@ -22,6 +22,13 @@ namespace RefinementTypes
         }
 
         public static BaseType AnyType = new BaseType("Any");
+
+        public static bool AIsSubtypeOfB(BaseType a, BaseType b)
+        {
+            if (b.Name == "Any")
+                return true;
+            return a.Name == b.Name;
+        }
     }
 
     internal class RefinedType : Type

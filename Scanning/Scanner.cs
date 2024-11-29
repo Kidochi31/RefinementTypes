@@ -361,6 +361,7 @@ namespace RefinementTypes.Scanning
         {
             {"test", TEST},
             {"type", TYPE},
+            {"fit", FIT},
 
             {"and",  AND },
             {"_", UNDERSCORE },
