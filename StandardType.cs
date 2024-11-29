@@ -11,6 +11,11 @@ namespace RefinementTypes
     {
         public List<StandardBaseType> Bases;
 
+        public StandardType()
+        {
+            Bases = [new StandardBaseType([])];
+        }
+
         public StandardType(List<StandardBaseType> bases)
         {
             Bases = bases;

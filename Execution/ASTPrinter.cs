@@ -11,14 +11,17 @@ using static RefinementTypes.Refinements.Refinement;
 using static RefinementTypes.Refinements.StandardRefinement;
 using RefinementTypes.Checking;
 
-namespace RefinementTypes.Printing
+namespace RefinementTypes.Execution
 {
-    internal class ASTPrinter
+    internal static class ASTPrinter
     {
         public static void PrintTopLevel(TopLevel topLevel)
         {
             switch(topLevel)
             {
+                case Print print:
+                    Console.WriteLine($"Print: {Environment.GetValue(print.Name.IdentifierName)}");
+                    return;
                 case TypeDeclaration typeDeclaration:
                     Console.WriteLine($"Type Declaration: {typeDeclaration.TypeName.IdentifierName}");
                     return;
@@ -62,8 +65,8 @@ namespace RefinementTypes.Printing
         {
             switch(type)
             {
-                case BaseType baseType:
-                    return baseType.Name;
+                case NamedType namedType:
+                    return namedType.Name;
 
                 case RefinedType refinedType:
                     return $"{StringifyType(refinedType.BaseType)}[{StringifyRefinement(refinedType.Refinement)}]";

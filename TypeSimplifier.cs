@@ -15,9 +15,12 @@ namespace RefinementTypes
         {
             switch(type)
             {
-                case BaseType baseType:
+                case NamedType baseType:
+                    if (baseType.Equals(NamedType.Any))
+                        return new StandardType();
+
                     StandardRefinement typeRefinement = new StandardRefinement.BaseTypeRefinement(baseType, false);
-                    return new StandardType([new StandardBaseType([typeRefinement])]);
+                    return StandardType.Refine(SimplifyType(baseType.BaseType), [[typeRefinement]]);
 
                 case RefinedType refinedType:
                     List<List<StandardRefinement>> sumOfProducts = ConvertRefinementToSumOfProducts(refinedType.Refinement, false);

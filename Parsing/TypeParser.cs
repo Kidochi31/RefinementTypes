@@ -67,7 +67,16 @@ namespace RefinementTypes.Parsing
             if (Match(IDENTIFIER))
             {
                 IdentifierToken identifier = (IdentifierToken)Previous;
-                return new BaseType(identifier.IdentifierName);
+                //return new NamedType(identifier.IdentifierName);
+                AnalysisValue value = Environment.GetValue(identifier.IdentifierName);
+                if(value.Type == NamedType.Type)
+                {
+                    return (Type)value.Value;
+                }
+                else
+                {
+                    throw Error(identifier, "value could not be found in environment");
+                }
             }
             if (Match(LEFT_PAREN))
             {

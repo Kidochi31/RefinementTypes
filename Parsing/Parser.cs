@@ -53,7 +53,18 @@ namespace RefinementTypes.Parsing
             if (Match(TYPE)) return TypeDeclaration();
             if (Match(TEST)) return TypeTest();
             if (Match(FIT)) return TypeFit();
+            if (Match(PRINT)) return Print();
             throw new ParseError();
+        }
+
+        // Print -> 'print' name '\n';
+        Print Print()
+        {
+            Token previous = Previous;
+            IdentifierToken name = (IdentifierToken)Consume(IDENTIFIER, "expected identifier after 'print'.");
+            Token newLine = ConsumeAny("expected new line at end of declaration.", NEW_LINE, EOF);
+
+            return new Print(previous, name, newLine);
         }
 
         // TypeFit -> 'fit' type 'in' type '\n' ; 
@@ -68,12 +79,22 @@ namespace RefinementTypes.Parsing
             return new TypeFit(fitToken, fromType, inToken, toType, newLine);
         }
 
+
+        // TypeDeclaration -> 'type' IDENTIFIER (':' Type)? '\n' ;
         TypeDeclaration TypeDeclaration()
         {
             Token typeToken = Previous;
             IdentifierToken name = (IdentifierToken)Consume(IDENTIFIER, "expected identifier after 'type'.");
+            Token? colonToken = null;
+            Type? type = null;
+            if (Match(COLON))
+            {
+                colonToken = Previous;
+                type = Type();
+            }
+
             Token newLine = ConsumeAny("expected new line at end of declaration.", NEW_LINE, EOF);
-            return new TypeDeclaration(typeToken, name, newLine);
+            return new TypeDeclaration(typeToken, name, colonToken, type, newLine);
         }
 
         TypeTest TypeTest()

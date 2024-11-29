@@ -3,7 +3,7 @@
 
 using System.Text;
 using RefinementTypes.Parsing;
-using RefinementTypes.Printing;
+using RefinementTypes.Execution;
 using RefinementTypes.Scanning;
 
 namespace RefinementTypes
@@ -57,9 +57,11 @@ namespace RefinementTypes
                 foreach(TopLevel tl in topLevels)
                 {
                     ASTPrinter.PrintTopLevel(tl);
+                    ASTExecutor.ExecuteTopLevel(tl);
                 }
+
             }
-            catch (Parser.ParseError e)
+            catch (Exception e)
             {
                 Console.WriteLine($"PARSE ERROR: {e.Message}");
             }

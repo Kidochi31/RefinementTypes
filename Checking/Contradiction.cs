@@ -1,4 +1,4 @@
-﻿using RefinementTypes.Printing;
+﻿using RefinementTypes.Execution;
 using RefinementTypes.Refinements;
 using System;
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace RefinementTypes.Checking
                 // a : X contradicts b : Y if X :/ Y and Y :/ X
                 if (!a.Not && !baseType.Not)
                 {
-                    return !BaseType.AIsSubtypeOfB(a.Type, baseType.Type) && !BaseType.AIsSubtypeOfB(baseType.Type, a.Type);
+                    return a.Type.WontBeSubtypeOf(baseType.Type) && baseType.Type.WontBeSubtypeOf(a.Type);
                 }
                 // a :/ X never contradicts b :/ Y
                 if (a.Not && baseType.Not)
@@ -84,12 +84,12 @@ namespace RefinementTypes.Checking
                 // a :/ X contradicts b: Y if Y : X
                 if (a.Not && !baseType.Not)
                 {
-                    return BaseType.AIsSubtypeOfB(baseType.Type, a.Type);
+                    return baseType.Type.WillBeSubtypeOf(a.Type);
                 }
                 // a : X contradicts b:/ Y if X : Y
                 else
                 {
-                    return BaseType.AIsSubtypeOfB(a.Type, baseType.Type);
+                    return a.Type.WillBeSubtypeOf(baseType.Type);
                 }
             }
             else

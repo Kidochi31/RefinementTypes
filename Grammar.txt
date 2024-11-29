@@ -3,11 +3,13 @@
 # 2. Check whether a type can be incorporated into another type (e.g. to check whether f(a) is valid)
 
 
-Start -> ( TypeDeclaration | TypeTest | TypeFit | '\n' ) * ;
+Start -> ( TypeDeclaration | TypeTest | TypeFit | Print '\n' ) * ;
 
-TypeDeclaration -> 'type' IDENTIFIER '\n' ;
+TypeDeclaration -> 'type' IDENTIFIER (':' Type)? '\n' ;
 
 IDENTIFIER -> ( [A-Z] | [a-z] | _ | [0-9] )* ;
+
+Print -> 'print' name '\n';
 
 TypeTest -> 'test' type '\n' ;
 

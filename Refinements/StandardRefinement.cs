@@ -23,10 +23,10 @@ namespace RefinementTypes.Refinements
 
         internal class BaseTypeRefinement : StandardRefinement
         {
-            public BaseType Type;
+            public NamedType Type;
             public bool Not;
 
-            public BaseTypeRefinement(BaseType type, bool not)
+            public BaseTypeRefinement(NamedType type, bool not)
             {
                 Type = type;
                 Not = not;

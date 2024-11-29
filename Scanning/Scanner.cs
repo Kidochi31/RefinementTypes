@@ -359,6 +359,7 @@ namespace RefinementTypes.Scanning
 
         static readonly Dictionary<string, TokenType> Keywords = new Dictionary<string, TokenType>
         {
+            {"print", PRINT },
             {"test", TEST},
             {"type", TYPE},
             {"fit", FIT},
@@ -384,7 +385,7 @@ namespace RefinementTypes.Scanning
             {"or", OR },
             {"not", NOT },
             {"xor", XOR },
-            //{"print", PRINT },
+            
             //{"return", RETURN },
             //{"super", SUPER },
             //{"this", THIS },
